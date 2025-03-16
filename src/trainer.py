@@ -66,9 +66,6 @@ class LightningModule(L.LightningModule):
     ):
         _ = self.common_step(batch, prefix="valid")
 
-        # if batch_idx == 0:
-        #     self.log_examples(batch)
-
     def configure_optimizers(
         self,
     ) -> tuple[list[torch.optim.Optimizer], list[torch.optim.lr_scheduler._LRScheduler]]:
