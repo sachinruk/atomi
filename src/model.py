@@ -96,8 +96,6 @@ class KCDecoderAttentionModel(nn.Module):
             decoder_layer, num_layers=model_config.num_layers
         )
         self.fc = nn.Linear(model_config.hidden_size, 1)
-        self.attention = nn.Linear(model_config.hidden_size, model_config.hidden_size)
-        self.attention_v = nn.Linear(model_config.hidden_size, 1)
 
     def forward(
         self, x: dict[str, torch.Tensor]

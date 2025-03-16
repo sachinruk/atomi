@@ -34,7 +34,6 @@ class LightningModule(L.LightningModule):
 
     def common_step(self, x: dict[str, torch.Tensor], prefix: str) -> torch.Tensor:
         out = self.model(x)
-
         loss_all = self.loss_fn(out, x["response"][..., None].float()).squeeze(dim=-1)
         loss = loss_all[x["attention_mask"]].mean()
         self.log(f"{prefix}_loss", loss, on_step=True, on_epoch=True)
