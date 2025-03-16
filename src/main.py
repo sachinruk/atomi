@@ -1,12 +1,8 @@
 import datetime
-import os
-import sys
 
 import typer
 import lightning as L
 from loguru import logger
-
-# from sklearn.model_selection import train_test_split
 
 from src import (
     config,
