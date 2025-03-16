@@ -1,21 +1,21 @@
 import dataclasses
 import pathlib
+from typing import ClassVar
 
 import pydantic
 
 
 @dataclasses.dataclass
 class DataConfig:
-    columns: list[str] = dataclasses.field(
-        default_factory=lambda: [
-            "questions",
-            "concepts",
-            "responses",
-            "timestamps",
-            "selectmasks",
-            "is_repeat",
-        ]
-    )
+    columns: ClassVar[list[str]] = [
+        "questions",
+        "concepts",
+        "responses",
+        "timestamps",
+        "selectmasks",
+        "is_repeat",
+    ]
+
     train_data_path: pathlib.Path = pathlib.Path("data/XES3G5M/kc_level/train_valid_sequences.csv")
     test_data_path: pathlib.Path = pathlib.Path("data/XES3G5M/kc_level/test.csv")
     questions_embeddings_path: pathlib.Path = pathlib.Path(
@@ -39,6 +39,7 @@ class TrainerConfig(pydantic.BaseModel):
     num_workers: int = 4
     learning_rate: float = 1e-3
     num_epochs: int = 10
+    test_fold: float = 4
 
     model_name: str = "kc_model"
     project_name: str = "kc_project"

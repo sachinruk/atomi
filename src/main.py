@@ -10,6 +10,7 @@ from loguru import logger
 
 from src import (
     config,
+    data_preprocess,
     data_pytorch,
     model,
     trainer,
@@ -29,6 +30,19 @@ def train(trainer_config_json: str = "{}", training_date: str = "") -> None:
         training_date = now.strftime("%Y%m%d-%H%M%S")
     _ = wandb_utils.get_wandb_logger(trainer_config, training_date)
     logger.info("Initialized wandb logger")
+
+    data = data_preprocess.read_data(config.DataConfig.train_data_path)
+    question_embeddings = data_preprocess.read_embeddings(
+        config.DataConfig.questions_embeddings_path
+    )
+    concept_embeddings = data_preprocess.read_embeddings(config.DataConfig.concepts_embeddings_path)
+    train_data, valid_data = data_preprocess.train_test_split(data, trainer_config)
+    logger.info("Data split into train and valid")
+
+    train_loader, valid_loader = data_pytorch.get_data_loaders(
+        train_data, valid_data, question_embeddings, concept_embeddings, trainer_config
+    )
+    logger.info("Data loaders created")
 
 
 # Entry point for the CLI app
