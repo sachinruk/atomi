@@ -44,6 +44,13 @@ def train(trainer_config_json: str = "{}", training_date: str = "") -> None:
     )
     logger.info("Data loaders created")
 
+    kc_model = model.KCLSTMModel(trainer_config.kc_model_config)
+    logger.info("Model created")
+
+    logger.info("Starting training")
+    trainer.train(kc_model, train_loader, valid_loader, trainer_config)
+    logger.info("Training complete")
+
 
 # Entry point for the CLI app
 if __name__ == "__main__":

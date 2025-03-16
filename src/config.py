@@ -33,9 +33,16 @@ class WandbConfig:
     WANDB_ENTITY: str = "sachinruk"
 
 
+class KCModelConfig(pydantic.BaseModel):
+    embedding_dim: int = 768
+    hidden_size: int = 128
+    num_layers: int = 3
+
+
 class TrainerConfig(pydantic.BaseModel):
     seed: int = 42
     batch_size: int = 32
+    accumulate_grad_batches: int = 1
     num_workers: int = 4
     learning_rate: float = 1e-3
     num_epochs: int = 10
@@ -44,6 +51,8 @@ class TrainerConfig(pydantic.BaseModel):
     model_name: str = "kc_model"
     project_name: str = "kc_project"
     is_local: bool = True
+
+    kc_model_config: KCModelConfig = KCModelConfig()
 
     class Config:
         extra = "forbid"
