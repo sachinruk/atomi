@@ -37,6 +37,8 @@ class KCModelConfig(pydantic.BaseModel):
     embedding_dim: int = 768
     hidden_size: int = 128
     num_layers: int = 3
+    num_heads: int = 8
+    use_lstm: bool = True
 
 
 class TrainerConfig(pydantic.BaseModel):

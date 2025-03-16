@@ -45,9 +45,9 @@ class LightningModule(L.LightningModule):
             self.accuracy[f"{prefix}_acc"](preds, ys)
             self.auroc[f"{prefix}_auroc"](preds, ys)
             self.log(
-                f"{prefix}_accuracy", self.accuracy[f"{prefix}_acc"], on_step=False, on_epoch=True
+                f"{prefix}_accuracy", self.accuracy[f"{prefix}_acc"], on_step=True, on_epoch=True
             )
-            self.log(f"{prefix}_auroc", self.auroc[f"{prefix}_auroc"], on_step=False, on_epoch=True)
+            self.log(f"{prefix}_auroc", self.auroc[f"{prefix}_auroc"], on_step=True, on_epoch=True)
 
         return loss
 
@@ -92,14 +92,14 @@ def train(
     lightning_module = LightningModule(kc_model, trainer_config.learning_rate, loss_fn)
     logger = WandbLogger()
     trainer = L.Trainer(
-        max_epochs=10 if trainer_config.is_local else trainer_config.num_epochs,
+        max_epochs=3 if trainer_config.is_local else trainer_config.num_epochs,
         accumulate_grad_batches=trainer_config.accumulate_grad_batches,
         gradient_clip_val=1.0,
         precision=32,
         num_sanity_val_steps=0,
         logger=logger,
         enable_progress_bar=trainer_config.is_local,
-        log_every_n_steps=10,
+        log_every_n_steps=100,
         # limit_train_batches=20 if trainer_config.is_local else 1.0,
         # limit_val_batches=3 if trainer_config.is_local else 1.0,
     )

@@ -75,3 +75,39 @@ class KCLSTMModel(nn.Module):
             return out, (hn, cn)
         else:
             return out
+
+
+class KCDecoderAttentionModel(nn.Module):
+    def __init__(self, model_config: config.KCModelConfig):
+        super().__init__()
+        self.num_layers = model_config.num_layers
+        self.hidden_size = model_config.hidden_size
+        self.input_projector = ProjectInput(model_config)
+        self.pos_encoder = nn.Embedding(200, model_config.hidden_size)
+
+        decoder_layer = nn.TransformerEncoderLayer(
+            model_config.hidden_size,
+            model_config.num_heads,
+            dim_feedforward=model_config.hidden_size * 2,
+            batch_first=True,
+        )
+
+        self.decoder_model = nn.TransformerEncoder(
+            decoder_layer, num_layers=model_config.num_layers
+        )
+        self.fc = nn.Linear(model_config.hidden_size, 1)
+        self.attention = nn.Linear(model_config.hidden_size, model_config.hidden_size)
+        self.attention_v = nn.Linear(model_config.hidden_size, 1)
+
+    def forward(
+        self, x: dict[str, torch.Tensor]
+    ) -> torch.Tensor | tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+        out: torch.Tensor = self.input_projector(
+            x["question_embeddings"], x["concept_embeddings"], x["response"]
+        )
+        pos_indices = torch.arange(out.shape[1], device=out.device)
+        out = out + self.pos_encoder(pos_indices)
+        decoder_mask = nn.Transformer.generate_square_subsequent_mask(out.shape[1]).to(out.device)
+        out = self.decoder_model(out, mask=decoder_mask)
+        out = self.fc(out)
+        return out

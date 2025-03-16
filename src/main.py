@@ -44,7 +44,10 @@ def train(trainer_config_json: str = "{}", training_date: str = "") -> None:
     )
     logger.info("Data loaders created")
 
-    kc_model = model.KCLSTMModel(trainer_config.kc_model_config)
+    if trainer_config.kc_model_config.use_lstm:
+        kc_model = model.KCLSTMModel(trainer_config.kc_model_config)
+    else:
+        kc_model = model.KCDecoderAttentionModel(trainer_config.kc_model_config)
     logger.info("Model created")
 
     logger.info("Starting training")
